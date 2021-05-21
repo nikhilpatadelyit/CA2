@@ -135,7 +135,7 @@ cor(Target, Age)
 # Age variable = -0.22 indicating a negative correlation.
 # The AGE variable is of no use in predicting the model.
 
-############# For SEX
+# For SEX
 scatter.smooth(x = Target, y = Sex, 
                main = "Target ~ Sex", 
                xlab = "Chance of Heart Attack",
@@ -285,9 +285,7 @@ paste("Correlation for the Target & Excercise:", cor(Target, Excercise_angina))
 paste("Correlation for the Target & Blood_Vessel:", cor(Target, Num_major_vessel))
 
 
-# Here we decided to remove the variables (AGE & SEX) as it is 
-# not much useful in predicting a model
-# new_heart_data <- subset(new_heart_data, select = c(-Age, -Sex))
+# Structure of the DF
 str(new_heart_data)
 head(new_heart_data)
 
@@ -426,7 +424,7 @@ boxplot(Max_heartrate,
                     boxplot.stats(Max_heartrate)$out))
 # There is no outlier present now
 
-###### Check the normality
+# Check the normality
 library(e1071)
 opar <- par(no.readonly = TRUE)
 par(mfrow =c(3,4)) # 2rows * 4cols
@@ -645,6 +643,7 @@ qqline(Num_major_vessel, col = "red")
 
 par <- opar
 
+# Here while predicting we only used the ND variables
 attach(new_heart_data)
 mlr_model <- lm(Target ~ 
                   Age + Resting_BP + Cholestoral + Max_heartrate)
@@ -652,18 +651,29 @@ detach(new_heart_data)
 
 summary(mlr_model)
 
+# Here we decided to remove the variables (AGE, Sex, Exercise) as it is 
+# not much useful in predicting a model
+# new_heart_data <- subset(new_heart_data, 
+#                        select = c(-Age, -Sex, -Excercise_angina))
+
 attach(new_heart_data)
 mlr_model_1 <- lm(Target ~ 
                     Resting_BP + Chest_pain + Cholestoral + Max_heartrate + 
                     Resting_ECG + Fasting_BS + Num_major_vessel)
+detach(new_heart_data)
 summary(mlr_model_1)
 
+attach(new_heart_data)
 mlr_model_2 <- lm(Target ~ 
                     Resting_BP + Cholestoral + Max_heartrate + Chest_pain)
+detach(new_heart_data)
 summary(mlr_model_2)
 
 
 
+confint(mlr_model)
+confint(mlr_model_1)
+confint(mlr_model_2)
 
 
 
