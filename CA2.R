@@ -542,6 +542,130 @@ paste("Skewness for Heart_Rate: ", round(e1071::skewness(Max_heartrate), 2))
 paste("Skewness for Excercise: ", round(e1071::skewness(Excercise_angina), 2))
 paste("Skewness for Blood_Vessel: ", round(e1071::skewness(Num_major_vessel), 2))
 
+# Minimal skewness = -0.11 - slightly skewed 
+# NB a skewness value <-1 or >1 = highly skewed 
+# Skewness -1 to -0.5 and 0.5 to 1 = moderately skewed 
+# And skewness -0.5 to 0.5 = approx symmetric
+
+# Age = -0.15 - approx symmetric
+# Sex = -0.88 - moderately skewed
+# Target = -0.21 - approx symmetric
+# Chest_Pain = 0.47 - moderately skewed
+# Blood_Pressure = 0.25 - approx symmetric
+# Cholestorol = 0.19 - approx symmetric
+# Sugar = 2.08 - highly skewed
+# ECG = 0.1 - approx symmetric
+# Heart_Rate = -0.46 - approx symmetric
+# Excercise = 0.77 - moderately skewed
+# Blood_Vessel = 1.31 - highly skewed
+
+# Histogram Visualization
+opar <- par(no.readonly = TRUE)
+par(mfrow = c(1,2)) # divide the graph area in 2 cols
+
+hist(Target, 
+     main = "Normalility proportion of Target", 
+     xlab = "Target")
+
+qqnorm(Target)
+qqline(Target, col = "red")
+
+
+hist(Age, 
+     main = "Normalility proportion of Age", 
+     xlab = "Age")
+
+qqnorm(Age)
+qqline(Age, col = "red")
+
+
+hist(Sex, 
+     main = "Normalility proportion of Sex", 
+     xlab = "Sex")
+
+qqnorm(Sex)
+qqline(Sex, col = "red")
+
+hist(Chest_pain, 
+     main = "Normalility proportion of Chest_Pain", 
+     xlab = "Chest_Pain")
+
+qqnorm(Chest_pain)
+qqline(Chest_pain, col = "red")
+
+
+hist(Resting_BP, 
+     main = "Normalility proportion of Blood_Pressur", 
+     xlab = "Blood_Pressure (mm/Hg)")
+
+qqnorm(Resting_BP)
+qqline(Resting_BP, col = "red")
+
+hist(Cholestoral, 
+     main = "Normalility proportion of Cholestorol", 
+     xlab = "Cholestorol (mg/dl)")
+
+qqnorm(Cholestoral)
+qqline(Cholestoral, col = "red")
+
+hist(Fasting_BS, 
+     main = "Normalility proportion of Sugar", 
+     xlab = "Sugar (mg/dl)")
+
+qqnorm(Fasting_BS)
+qqline(Fasting_BS, col = "red")
+
+hist(Resting_ECG, 
+     main = "Normalility proportion of ECG", 
+     xlab = "ECG")
+
+qqnorm(Resting_ECG)
+qqline(Resting_ECG, col = "red")
+
+hist(Max_heartrate, 
+     main = "Normalility proportion of Heart_Rate", 
+     xlab = "Heart_Rate")
+
+qqnorm(Max_heartrate)
+qqline(Max_heartrate, col = "red")
+
+hist(Excercise_angina, 
+     main = "Normalility proportion of Excercise", 
+     xlab = "Excercise")
+
+qqnorm(Excercise_angina)
+qqline(Excercise_angina, col = "red")
+
+hist(Num_major_vessel, 
+     main = "Normalility proportion of Blood_Vessels", 
+     xlab = "Blood_Vessels")
+
+qqnorm(Num_major_vessel)
+qqline(Num_major_vessel, col = "red")
+
+par <- opar
+
+attach(new_heart_data)
+mlr_model <- lm(Target ~ 
+                  Age + Resting_BP + Cholestoral + Max_heartrate)
+detach(new_heart_data)
+
+summary(mlr_model)
+
+attach(new_heart_data)
+mlr_model_1 <- lm(Target ~ 
+                    Resting_BP + Chest_pain + Cholestoral + Max_heartrate + 
+                    Resting_ECG + Fasting_BS + Num_major_vessel)
+summary(mlr_model_1)
+
+mlr_model_2 <- lm(Target ~ 
+                    Resting_BP + Cholestoral + Max_heartrate + Chest_pain)
+summary(mlr_model_2)
+
+
+
+
+
 
 
 
