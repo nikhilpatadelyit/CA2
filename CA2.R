@@ -102,15 +102,15 @@ pairs.panels(new_heart_data,
 
 # For further implementation we need to keep in mind about the
 # dependent & independent variables for predicting the model
-# INDEPENDENT variable = "TARGET"
-# DEPENDENT variables = All others except 'TARGET'
+# DEPENDENT variable = "TARGET"
+# INDEPENDENT variables = All others except 'TARGET'
 
 
 # Including the variables we need to use for predicting a model
 
 
-# Independent var = X-axis
-# Dependent var = Y-axis
+# Dependent var = X-axis
+# Independent var = Y-axis
 
 # Low correlation = value equal to zero
 # High Correlation = straight line in plot (value > 0.60) 
