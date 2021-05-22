@@ -304,12 +304,71 @@ ggplot(new_heart_data, aes(Num_major_vessel, fill = Target)) +
 # It is considered to be a risk factor
 # Analysis shows that if no blood vessel are seen then there is a high chance of HA
 
+########################################
+# Prediction using "LOGISTIC REGRESSION"
+########################################
+# Keeping in mind we have dropped the null values & 
+# also the categorical variables are converted to factor as required
 
+# Comparing the model with the ratio of 70% training & 
+# 30% for testing the instances
+# Observing that the distribution of the Dependent var (Target) need to be same
 
+# The training set will evaluate the model with 10 fold cross validation
+# We are not specifying the parameters to train, let the model use them by default
+# meaning that some random set of combinations will be selected and the model 
+# will be trained for each combinations
+# Validating the variables for building a model
+set.seed(8)
+training_data <- createDataPartition(new_heart_data$Target, 
+                                     p = 0.70, 
+                                     list = FALSE)
 
+new_heart_data_train <- new_heart_data[training_data, ] # 213 records
+new_heart_data_test <- new_heart_data[-training_data, ] # 90 records
 
+# Cross-validation (n=10)
+fitcontrol <- trainControl(method = "cv", number = 10)
 
+# Summarizing the results
+fitcontrol
 
+# Training the model with Logistic Regression
+model.lr <- train(Target ~ ., 
+                  data = new_heart_data_train, 
+                  method = "glm", 
+                  family = binomial(), 
+                  trControl = fitcontrol)
 
+# Summarizing the results
+model.lr
+# The results validated that the accuracy and kappa generated for the 
+# parameters are the best which suits the model
+# As it shows that the variables defined for validating is yields out the 
+# accuracy = 76% & kappa = 52%
+# We can conclude that model is accurate with the combination and validation 
+# we used to trained and test our data
 
+#################################
+# Prediction using "NAIVE BAYES"
+#################################
+# Building a model using Naive-Bayes
+# install.packages("naivebayes")
+library(naivebayes)
+model.nb <- train(Target ~ ., 
+                  data = new_heart_data_train, 
+                  method = "naive_bayes", 
+                  trControl = fitcontrol)
+
+# Summarizing the results
+model.nb
+# The results validated that the accuracy and kappa generated for the 
+# parameters are the best which suits the model
+# As it shows, the model is 78% accurate when use-kernel = true
+# We can conclude that model is accurate with the combination and validation 
+# we used to trained and test our data
+
+# Visual representation to show the accuracy performed on the model
+# from use-kernel = false to use-kernel = true
+plot(model.nb)
 
