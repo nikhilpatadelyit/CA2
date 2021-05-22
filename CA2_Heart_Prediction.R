@@ -97,11 +97,11 @@ pairs.panels(new_heart_data,
 
 
 ######################## HEART DATA ################################
-# Heart Dataset - Predicting the chances of getting a "Heart-Attack"
+# Heart Data-set - Predicting the chances of getting a "Heart-Attack"
 # Using Different Technique
 ####################################################################
 
-# Tranforming the categorical variable to the required factor format 
+# Transforming the categorical variable to the required factor format 
 # using (as.factor) function
 new_heart_data$Sex <- as.factor(new_heart_data$Sex)
 new_heart_data$Chest_pain <- as.factor(new_heart_data$Chest_pain)
@@ -165,6 +165,8 @@ str(new_heart_data)
 # Display the enties from the DF
 head(new_heart_data)
 
+# To visualize the distribution and correlation 
+# using (pairs) & (pairs.panel) after transformation & labeling
 pairs(new_heart_data)
 
 pairs.panels(new_heart_data, 
@@ -183,17 +185,126 @@ pairs.panels(new_heart_data,
              ci = TRUE) # If TRUE, adds confidence intervals
 
 # Importing & Installing the required packages & libraries
-install.packages("ggplot2")
-install.packages("caret")
-install.packages("rpart.plot")
+# install.packages("ggplot2")
+# install.packages("caret")
+# install.packages("rpart.plot")
 library(ggplot2)
 library(caret)
 library(rpart.plot)
 
-# Plot the graph to analyze the specified attributes with the Target
+# For visual analysis considering the variable
+# Dependent var = Target
+# Independent var = All the others
+# Further will decide which variables to include for predicting model
+
+# For Target
+# Plot the graph to analyze the specified attributes Target
 ggplot(new_heart_data, aes(Target, fill = Target)) + 
-  geom_bar() + labs(x = "Heart-Attack status", y = "Patien Count") + 
+  geom_bar() + labs(x = "Heart-Attack status", y = "Patient Count") + 
   guides(fill = FALSE)
+# We can see that the distribution is quite balanced 
+# this could be a good idea using accuracy 
+# to evaluate how well the models perform
+
+# For Target v/s Age
+# Plot the graph to analyze the specified attributes 
+# with Target & Age
+ggplot(new_heart_data, aes(Age, fill = Target)) + 
+  geom_histogram(binwidth = 1) + 
+  labs(fill = "HA chances", x = "Age (years)", y = "Patient Count")
+# We observed that age is not a risk factor
+# higher the age less are the chances to get the HA
+
+# For Target v/s Sex
+# Plot the graph to analyze the specified attributes 
+# with Target & Sex
+ggplot(new_heart_data, aes(Sex, fill = Target)) + 
+  geom_bar() + 
+  labs(fill = "HA chances", x = "Sex", y = "Patient Count")
+# We observed that sex is a risk factor
+# Males have the higher chances of getting a HA then Female
+
+# For Target v/s Chest_Pain
+# Plot the graph to analyze the specified attributes 
+# with Target & Chest_Pain
+ggplot(new_heart_data, aes(Chest_pain, fill = Target)) + 
+  geom_bar() + 
+  labs(fill = "HA chances", x = "Chest_Pain_Type", y = "Patient Count")
+# The data do not show how the pain is classified
+# we observed that only in typical angina patient have less chance of HA
+# but if any other type of pain it is likely to have more chance of HA
+
+# For Target v/s Blood_Pressure
+# Plot the graph to analyze the specified attributes 
+# with Target & Blood_Pressure
+ggplot(new_heart_data, aes(Resting_BP, fill = Target)) + 
+  geom_histogram(binwidth = 3) + 
+  labs(fill = "HA chances", x = "Blood_Pressure (mm Hg)", y = "Patient Count")
+# Observed that the range(100-160) have more chance of getting HA
+# Medically proven is higher the sugar level high are the chance of HA
+# But our analysis is exactly opposite, higher level have less chance of HA
+
+# For Target v/s Cholesterol
+# Plot the graph to analyze the specified attributes 
+# with Target & Cholesterol
+ggplot(new_heart_data, aes(Cholestoral, fill = Target)) + 
+  geom_histogram(binwidth = 10) + 
+  labs(fill = "HA chances", x = "Cholestorol (mg/dl)", y = "Patient Count")
+# Observed that the range(150+) have more chance of getting a HA
+# It can also be controlled
+# At certain level also patients have more chance of getting a HA even though
+# the cholestorol level is normal
+
+# For Target v/s Sugar
+# Plot the graph to analyze the specified attributes 
+# with Target & Sugar_Level
+ggplot(new_heart_data, aes(Fasting_BS, fill = Target)) + 
+  geom_bar() + 
+  labs(fill = "HA chances", x = "Sugar_Level (> 120 md/dl)", y = "Patient Count")
+# We observed that sugar is also a risk factor
+# It can also be controlled
+# Analysis shows that if sugar level < (120 mg/dl) patient have more chance of HA
+
+# For Target v/s ECG
+# Plot the graph to analyze the specified attributes 
+# with Target & ECG
+ggplot(new_heart_data, aes(Resting_ECG, fill = Target)) + 
+  geom_bar() + 
+  labs(fill = "HA chances", x = "ECG", y = "Patient Count")
+# We observed that ECG can also be a risk factor depending on its wave
+# Analysis showed that the abnormal wave of ECG can have more chances of HA
+# compared to the normal and hypertrophy
+
+# For Target v/s Heart_Rate
+# Plot the graph to analyze the specified attributes 
+# with Target & Heart_Rate
+ggplot(new_heart_data, aes(Max_heartrate, fill = Target)) + 
+  geom_histogram(binwidth = 10) + 
+  labs(fill = "HA chances", x = "Maximum Heart Rate", y = "Patient Count")
+# Observed that higher are the chance of HA when Heart_Rate is maximum
+# It can be considered as a risk factor but may also vary from the patients age
+
+# For Target v/s Exercise_Angina
+# Plot the graph to analyze the specified attributes 
+# with Target & Exercise_Angina
+ggplot(new_heart_data, aes(Excercise_angina, fill = Target)) + 
+  geom_bar() + 
+  labs(fill = "HA chances", x = "Angina during Exercise", y = "Patient Count")
+# It is also a risk factor to get the HA
+# Analysis showed that if there is no angina during exercise patient have 
+# more chance to get HA
+# Also sometimes the angina cannot be identified so it can be of any type
+
+# For Target v/s Blood_Vessels
+# Plot the graph to analyze the specified attributes 
+# with Target & Exercise_Angina
+ggplot(new_heart_data, aes(Num_major_vessel, fill = Target)) + 
+  geom_bar() + 
+  labs(fill = "HA chances", x = "Blood_Vessel Seen", y = "Patient Count")
+# It is considered to be a risk factor
+# Analysis shows that if no blood vessel are seen then there is a high chance of HA
+
+
 
 
 
