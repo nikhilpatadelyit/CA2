@@ -304,9 +304,9 @@ ggplot(new_heart_data, aes(Num_major_vessel, fill = Target)) +
 # It is considered to be a risk factor
 # Analysis shows that if no blood vessel are seen then there is a high chance of HA
 
-########################################
-# Prediction using "LOGISTIC REGRESSION"
-########################################
+##################################
+# Model Validation (Train & Test)
+##################################
 # Keeping in mind we have dropped the null values & 
 # also the categorical variables are converted to factor as required
 
@@ -319,7 +319,7 @@ ggplot(new_heart_data, aes(Num_major_vessel, fill = Target)) +
 # meaning that some random set of combinations will be selected and the model 
 # will be trained for each combinations
 # Validating the variables for building a model
-set.seed(8)
+set.seed(1)
 training_data <- createDataPartition(new_heart_data$Target, 
                                      p = 0.70, 
                                      list = FALSE)
@@ -333,7 +333,11 @@ fitcontrol <- trainControl(method = "cv", number = 10)
 # Summarizing the results
 fitcontrol
 
-# Training the model with Logistic Regression
+########################################
+# Prediction using "LOGISTIC REGRESSION"
+########################################
+# Training the model with Logistic-Regression
+set.seed(1)
 model.lr <- train(Target ~ ., 
                   data = new_heart_data_train, 
                   method = "glm", 
@@ -345,9 +349,22 @@ model.lr
 # The results validated that the accuracy and kappa generated for the 
 # parameters are the best which suits the model
 # As it shows that the variables defined for validating is yields out the 
-# accuracy = 76% & kappa = 52%
+# accuracy = 79% & kappa = 58%
 # We can conclude that model is accurate with the combination and validation 
 # we used to trained and test our data
+
+# Evaluating the model for prediction using the test data
+# Predicting the model using Logistic-Regression
+prediction_lr <- predict(model.lr, 
+                         new_heart_data_test)
+
+# Confusion matrix for the predicted model using Logistic-Regression
+confusionMatrix(prediction_lr, 
+                new_heart_data_test$Target)
+
+# The model evaluated that it is 75% accurate while predicting the outcome
+# which almost has the same accuracy, compared with the results of 
+# cross-validation technique we performed it showed 79% accuracy
 
 #################################
 # Prediction using "NAIVE BAYES"
@@ -355,6 +372,7 @@ model.lr
 # Building a model using Naive-Bayes
 # install.packages("naivebayes")
 library(naivebayes)
+set.seed(1)
 model.nb <- train(Target ~ ., 
                   data = new_heart_data_train, 
                   method = "naive_bayes", 
@@ -364,11 +382,62 @@ model.nb <- train(Target ~ .,
 model.nb
 # The results validated that the accuracy and kappa generated for the 
 # parameters are the best which suits the model
-# As it shows, the model is 78% accurate when use-kernel = true
+# As it shows, the model is 77% accurate when use-kernel = false
 # We can conclude that model is accurate with the combination and validation 
 # we used to trained and test our data
 
 # Visual representation to show the accuracy performed on the model
 # from use-kernel = false to use-kernel = true
 plot(model.nb)
+
+# Evaluating the model for prediction using the test data
+# Predicting the model using Naive-Bayes
+prediction_nb <- predict(model.nb, 
+                         new_heart_data_test)
+
+# Confusion matrix for the predicted model using Naive-Bayes
+confusionMatrix(prediction_nb, 
+                new_heart_data_test$Target)
+
+# The model evaluated that it is 81% accurate while predicting the outcome
+# which almost has the same accuracy, compared with the results of 
+# cross-validation technique we performed it showed 77% accuracy
+
+##################################
+# Prediction using "RANDOM FOREST"
+##################################
+# Building a model using Random-Forest
+# install.packages("randomForest")
+library(randomForest)
+set.seed(1)
+model.rf <- train(Target ~ ., 
+                  data = new_heart_data_train, 
+                  method = "rf", 
+                  trControl = fitcontrol)
+
+# Summarizing the results
+model.rf
+# The results validated that the accuracy and kappa generated for the 
+# parameters are the best which suits the model
+# As it shows, the model is 80% accurate when value for the randomly sampled 
+# variable (mtry = 7)
+# We can conclude that model is accurate with the combination and validation 
+# we used to trained and test our data
+
+# Visual representation to show the accuracy performed on the model
+# from the randomly sampled variable value = 7
+plot(model.rf)
+
+# Evaluating the model for prediction using the test data
+# Predicting the model using Random-Forest
+prediction_rf <- predict(model.rf, 
+                         new_heart_data_test)
+
+# Confusion matrix for the predicted model using Random-Forest
+confusionMatrix(prediction_rf, 
+                new_heart_data_test$Target)
+
+# The model evaluated that it is 80% accurate while predicting the outcome
+# which almost has the same accuracy, compared with the results through the  
+# cross-validation technique we performed it showed 80% accuracy
 
