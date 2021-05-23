@@ -310,15 +310,14 @@ ggplot(new_heart_data, aes(Num_major_vessel, fill = Target)) +
 # Keeping in mind we have dropped the null values & 
 # also the categorical variables are converted to factor as required
 
-# Comparing the model with the ratio of 70% training & 
-# 30% for testing the instances
-# Observing that the distribution of the Dependent var (Target) need to be same
-
 # The training set will evaluate the model with 10 fold cross validation
 # We are not specifying the parameters to train, let the model use them by default
 # meaning that some random set of combinations will be selected and the model 
 # will be trained for each combinations
 # Validating the variables for building a model
+# Comparing the model with the ratio of 70% training & 
+# 30% for testing the instances
+# Observing that the distribution of the Dependent var (Target) need to be same
 set.seed(1)
 training_data <- createDataPartition(new_heart_data$Target, 
                                      p = 0.70, 
@@ -440,4 +439,11 @@ confusionMatrix(prediction_rf,
 # The model evaluated that it is 80% accurate while predicting the outcome
 # which almost has the same accuracy, compared with the results through the  
 # cross-validation technique we performed it showed 80% accuracy
+
+# Comparing with the result evaluated using different techniques in implementing
+# a model, in future we might select some of the parameters to tune our model 
+# expecting some better accuracy for the model we build.
+
+
+
 
