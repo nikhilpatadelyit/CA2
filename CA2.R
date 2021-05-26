@@ -130,7 +130,7 @@ scatter.smooth(x = Target, y = Age,
 # Checking Correlation
 # Values of -0.2 < x < 0.2 - Low Correlation
 cor(Target, Age)
-# It is giving a negavtive correlation value = -0.22
+# It is giving a negative correlation value = -0.22
 # The correlation tests shows that the correlation between the Target & 
 # Age variable = -0.22 indicating a negative correlation.
 # The AGE variable is of no use in predicting the model.
@@ -145,7 +145,7 @@ scatter.smooth(x = Target, y = Sex,
 # Checking Correlation
 # Values of -0.2 < x < 0.2 - Low Correlation
 cor(Target, Sex)
-# It is giving a negavtive correlation value = -0.28
+# It is giving a negative correlation value = -0.28
 # The correlation tests shows that the correlation between the Target & 
 # Sex variable = -0.28 indicating a negavtive correlation.
 # The SEX field can also be excluded for predicting an model.
@@ -593,7 +593,7 @@ qqline(Chest_pain, col = "red")
 
 
 hist(Resting_BP, 
-     main = "Normalility proportion of Blood_Pressur", 
+     main = "Normalility proportion of Blood_Pressure", 
      xlab = "Blood_Pressure (mm/Hg)")
 
 qqnorm(Resting_BP)
