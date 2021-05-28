@@ -4,7 +4,7 @@
 # of "HEART-ATTACK" with the variables present.
 
 # Importing & Installing the required packages & libraries
-# wherever needed for analysing and visualizing
+# wherever needed for analyzing and visualizing
 
 # Importing the dataset into a DF
 heart_data <- read.csv("heart.csv", na="")
@@ -921,6 +921,56 @@ summary(gvmodel)
 # made with the regression model.
 # Also the p-values > 0.05, so the decisions are acceptable.
 
+# Comparing the model build with different variables using the AIC() function
+AIC(fit_model)
+# AIC value = 191.74
+
+# Evaluating the analysis of the model using a Step-wise Regression
+library(MASS)
+attach(new_heart_data)
+fit_test_model <- lm(Target ~ Age + Sex + Chest_pain + 
+                       Resting_BP + Resting_ECG + Fasting_BS + 
+                       Max_heartrate + Cholestoral + Excercise_angina + 
+                       Num_major_vessel, data = training_data)
+
+stepAIC(fit_test_model, direction = "backward")
+# Performing the 'backward' stepwise regression on this model it showed 
+# that the predictor variables are removed one by one by the stepAIC() function  
+# for calculating the AIC score with the better combination of the variables.
+# At some point when the combinations of the variables does not change its value
+# the stepAIC() stops calculating further and gives a result which better fits.
+# Here it suggests that (Sex + Chest_pain + Resting_BP + Max_heartrate + 
+# Cholestoral + Excercise_angina + Num_major_vessel) is the best combination 
+# for the model with AIC score = -394
+# We cannot conclude that this is a best for the model
+
+# install.packages("leaps")
+library(leaps)
+leaps <- regsubsets(Target ~ Age + Sex + Chest_pain + 
+                      Resting_BP + Resting_ECG + Fasting_BS + 
+                      Max_heartrate + Cholestoral + Excercise_angina + 
+                      Num_major_vessel, data = training_data, nbest = 4)
+plot(leaps,scale = "adjr2")
+# The leap plot shows the best correlation of the variables with the score of 
+# R-squared and Adjusted R-squared values on the y-axis.
+# A model (bottom row) with the intercept and chest_pain has an adjusted R-squared = 0.15.
+# At the top with the variables(intercept, Sex, Chest_pain, Resting_BP, Max_heartrate, 
+# Cholestoral, Excercise_angina, Num_major_vessel) shows the adjusted R-squared = 0.46.
+# Thus the top row with the value 0.46 shows that the variables used are the best fit
+# model build. A stepwise regression check also correlates with this varaibles.
+
+# Now examine the accuracy of the model predicted
+predicted_heart_attack <- predict(fit_model, testing_data)
+
+actual_prediction <- data.frame(cbind(actuals = testing_data$Target, 
+                                      predicted = predicted_heart_attack))
+
+head(actual_prediction)
+
+correlation_accuracy <- cor(actual_prediction)
+correlation_accuracy
+
+# This build model shows 60% of the correlation accuracy.
 
 ############################
 # NEW MODEL = (fit_model_1)
@@ -1117,5 +1167,52 @@ AIC(fit_model_1)
 # Lower the AIC score, high are the chances of best predicting model build 
 # with the analysis of the result statistic observed.
 
+# Evaluating the analysis of the model using a Step-wise Regression
+library(MASS)
+attach(new_heart_data)
+fit_test_model_1 <- lm(Target ~ Age + Sex + Chest_pain + 
+                         Max_heartrate + Cholestoral + Excercise_angina + 
+                         Num_major_vessel, data = training_data)
+
+stepAIC(fit_test_model_1, direction = "backward")
+# Performing the 'backward' stepwise regression on this model it showed 
+# that the predictor variables are removed one by one by the stepAIC() function  
+# for calculating the AIC score with the better combination of the variables.
+# At some point when the combinations of the variables does not change its value
+# the stepAIC() stops calculating further and gives a result which better fits.
+# Here it suggests that (Sex + Chest_pain + Max_heartrate + Cholestoral + 
+# Excercise_angina + Num_major_vessel) is the best combination 
+# for the model with AIC score = -390
+# We cannot conclude that this is a best combination for the model
+
+# install.packages("leaps")
+library(leaps)
+leaps <- regsubsets(Target ~ Age + Sex + Chest_pain + 
+                      Max_heartrate + Cholestoral + Excercise_angina + 
+                      Num_major_vessel, data = training_data, nbest = 4)
+
+plot(leaps,scale = "adjr2")
+# The leap plot shows the best correlation of the variables with the score of 
+# R-squared and Adjusted R-squared values on the y-axis.
+# A model (bottom row) with the intercept and chest_pain has an adjusted R-squared = 0.15.
+# At the top with the variables(intercept, Sex, Chest_pain, Max_heartrate, Cholestoral, 
+# Excercise_angina, Num_major_vessel) shows the adjusted R-squared = 0.47.
+# Thus the top row with the value 0.47 shows that the variables used are the best fit
+# model build. A stepwise regression check also correlates with this variables.
+
+
+# Now examine the accuracy of the model predicted
+predicted_heart_attack_1 <- predict(fit_model_1, testing_data)
+
+actual_prediction_1 <- data.frame(cbind(actuals = testing_data$Target, 
+                                      predicted = predicted_heart_attack_1))
+
+head(actual_prediction_1)
+
+correlation_accuracy_1 <- cor(actual_prediction_1)
+correlation_accuracy_1
+
+# This model build with transformation of the variables shows 
+# 59% correlation accuracy
 
 
