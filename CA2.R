@@ -76,9 +76,10 @@ colnames(new_heart_data)
 # install.packages("psych")
 library(psych)
 
-# To visualize the distribution and correlation
+# Investigation for the initial variables
 pairs(new_heart_data)
 
+# To visualize the distribution and correlation
 pairs.panels(new_heart_data, 
              smooth = FALSE, # If TRUE, draws less smooths
              scale = FALSE, # If TRUE, scales the correlation text font
@@ -96,7 +97,7 @@ pairs.panels(new_heart_data,
 
 
 ######################## HEART DATA ################################
-# Heart Dataset - Predicting the chances of getting a "Heart-Attack"
+# Heart Data-set - Predicting the chances of getting a "Heart-Attack"
 # Using "Multiple Linear Regression" Technique
 ####################################################################
 
@@ -107,8 +108,6 @@ pairs.panels(new_heart_data,
 
 
 # Including the variables we need to use for predicting a model
-
-
 # Dependent var = X-axis
 # Independent var = Y-axis
 
@@ -117,10 +116,17 @@ pairs.panels(new_heart_data,
 # (positive & negative)
 # No correlation = No correlation no line
 
+# We will check the assumptions stricked for Linearity
+# Checking for variable having any Outliers, Normality, Collinearity
+
+# Step-1: We will check the correlation
 attach(new_heart_data)
 str(new_heart_data)
 
-# For AGE
+# We can examine whether there is a linear correlation between both variables
+# For Target v/s Age
+# Plot the graph to analyze the specified attributes 
+# with Target & Age
 scatter.smooth(x = Target, y = Age, 
                main = "Target ~ Age", 
                xlab = "Chance of Heart Attack",
@@ -135,7 +141,9 @@ cor(Target, Age)
 # Age variable = -0.22 indicating a negative correlation.
 # The AGE variable is of no use in predicting the model.
 
-# For SEX
+# For Target v/s Sex
+# Plot the graph to analyze the specified attributes 
+# with Target & Sex
 scatter.smooth(x = Target, y = Sex, 
                main = "Target ~ Sex", 
                xlab = "Chance of Heart Attack",
@@ -150,7 +158,9 @@ cor(Target, Sex)
 # Sex variable = -0.28 indicating a negavtive correlation.
 # The SEX field can also be excluded for predicting an model.
 
-# For CHEST_PAIN
+# For Target v/s Chest Pain
+# Plot the graph to analyze the specified attributes 
+# with Target & Chest_Pain
 scatter.smooth(x = Target, y = Chest_pain, 
                main = "Target ~ Cheat_Pain", 
                xlab = "Chance of Heart Attack",
@@ -165,7 +175,9 @@ cor(Target, Chest_pain)
 # Chest_Pain variable = 0.43 indicating a medium correlation.
 # We can keep this variable for Prediction
 
-# For BLOOD_PRESSURE
+# For Target v/s Blood_Pressure
+# Plot the graph to analyze the specified attributes 
+# with Target & Blood_Pressure
 scatter.smooth(x = Target, y = Resting_BP, 
                main = "Target ~ Blood_Pressure", 
                xlab = "Chance of Heart Attack",
@@ -180,7 +192,9 @@ cor(Target, Resting_BP)
 # Blood Pressure variable = -0.14 indicating a low negative correlation.
 # We can decide to keep this variable for prediction or not.
 
-# For CHOLESTEROL
+# For Target v/s Cholestoral
+# Plot the graph to analyze the specified attributes 
+# with Target & Cholestoral
 scatter.smooth(x = Target, y = Cholestoral, 
                main = "Target ~ Cholestoral", 
                xlab = "Chance of Heart Attack",
@@ -195,7 +209,9 @@ cor(Target, Cholestoral)
 # Cholesterol variable = -0.08 indicating a low negative correlation.
 # We can decide to keep this variable for prediction or not
 
-# FOR SUGAR
+# For Target v/s Sugar
+# Plot the graph to analyze the specified attributes 
+# with Target & Sugar
 scatter.smooth(x = Target, y = Fasting_BS, 
                main = "Target ~ Sugar_Level", 
                xlab = "Chance of Heart Attack",
@@ -210,7 +226,9 @@ cor(Target, Fasting_BS)
 # Sugar variable = -0.02 indicating a low negative correlation.
 # We can decide to keep this variable for prediction or not
 
-# For ECG
+# For Target v/s ECG
+# Plot the graph to analyze the specified attributes 
+# with Target & ECG
 scatter.smooth(x = Target, y = Resting_ECG, 
                main = "Target ~ ECG", 
                xlab = "Chance of Heart Attack",
@@ -225,8 +243,9 @@ cor(Target, Resting_ECG)
 # ECG variable = 0.13 indicating a less correlation.
 # We can decide to keep this variable for prediction or not.
 
-
-# For HEART_RATE
+# For Target v/s Heart_Rate
+# Plot the graph to analyze the specified attributes 
+# with Target & Heart_Rate
 scatter.smooth(x = Target, y = Max_heartrate, 
                main = "Target ~ Heart_Rate", 
                xlab = "Chance of Heart Attack",
@@ -241,8 +260,9 @@ cor(Target, Max_heartrate)
 # Heart_Rate variable = 0.42 indicating a medium correlation.
 # We can keep this variable for Prediction
 
-
-# For EXCERCISE
+# For Target v/s Excercise
+# Plot the graph to analyze the specified attributes 
+# with Target & Excercise
 scatter.smooth(x = Target, y = Excercise_angina, 
                main = "Target ~ Excercise", 
                xlab = "Chance of Heart Attack",
@@ -257,7 +277,9 @@ cor(Target, Excercise_angina)
 # Exercise variable = -0.43 indicating a strong negative correlation.
 # The Excercise variable is of no use in predicting the model.
 
-# For BLOOD_VESSELS
+# For Target v/s Blood_Vessels
+# Plot the graph to analyze the specified attributes 
+# with Target & Blood_Vessels
 scatter.smooth(x = Target, y = Num_major_vessel, 
                main = "Target ~ Blood_Vessels", 
                xlab = "Chance of Heart Attack",
@@ -272,7 +294,7 @@ cor(Target, Num_major_vessel)
 # Blood Vessel variable = -0.39 indicating a strong negative correlation.
 
 
-# To check the correlation for all the variables from the DF
+# To check the results of correlation for all the variables from the DF
 paste("Correlation for the Target & Age:", cor(Target, Age))
 paste("Correlation for the Target & Sex:", cor(Target, Sex))
 paste("Correlation for the Target & Chest_Pain:", cor(Target, Chest_pain))
@@ -289,9 +311,11 @@ paste("Correlation for the Target & Blood_Vessel:", cor(Target, Num_major_vessel
 str(new_heart_data)
 head(new_heart_data)
 
-# Check the outliers
+# Initially making the DF to use for just READ-ONLY option
 opar <- par(no.readonly = TRUE)
 
+# We will check here for any Outliers
+# Step 2: we will check the Outliers here
 boxplot(Age, 
         main = "Age", 
         sub = paste("Outlier rows: ", 
@@ -360,8 +384,9 @@ boxplot(Num_major_vessel,
 
 par(opar)
 
-# use the boxplot.stats() function to extract 
-# the outliers for population
+# We will remove the Outliers if present in any variable
+# using the boxplot.stats() function to extract 
+# the outliers values where they are identified in the DF
 outlier_values <- boxplot.stats(Resting_BP)$out
 paste("Blood_Pressure Outliers: ", 
       paste(outlier_values, 
@@ -424,11 +449,15 @@ boxplot(Max_heartrate,
                     boxplot.stats(Max_heartrate)$out))
 # There is no outlier present now
 
-# Check the normality
+# Here we will check the Normality
+# Step-3: We are going to check the normality
 library(e1071)
 opar <- par(no.readonly = TRUE)
 par(mfrow =c(3,4)) # 2rows * 4cols
 
+# We can also get to the skewness for all the variables into the DF
+# using the following function
+# Plot the density graph for the variable specified
 plot(density(Age), 
      main = "Density plot for Age", 
      ylab = "Frequency", xlab = "Age",
@@ -438,6 +467,7 @@ plot(density(Age),
 # Fill in the area under the plot with red
 polygon(density(Age), col = "red")
 
+# Plot the density graph for the variable specified
 plot(density(Sex), 
      main = "Density plot for Sex", 
      ylab = "Frequency", xlab = "Sex",
@@ -447,6 +477,7 @@ plot(density(Sex),
 # Fill in the area under the plot with red
 polygon(density(Sex), col = "red")
 
+# Plot the density graph for the variable specified
 plot(density(Target), 
      main = "Density plot for Target", 
      ylab = "Frequency", xlab = "Target",
@@ -456,6 +487,7 @@ plot(density(Target),
 # Fill in the area under the plot with red
 polygon(density(Target), col = "red")
 
+# Plot the density graph for the variable specified
 plot(density(Chest_pain), 
      main = "Density plot for Chest_Pain", 
      ylab = "Frequency", xlab = "Chest_Pain",
@@ -465,6 +497,7 @@ plot(density(Chest_pain),
 # Fill in the area under the plot with red
 polygon(density(Chest_pain), col = "red")
 
+# Plot the density graph for the variable specified
 plot(density(Resting_BP), 
      main = "Density plot for Blood_Pressure", 
      ylab = "Frequency", xlab = "Blood_Pressure",
@@ -474,6 +507,7 @@ plot(density(Resting_BP),
 # Fill in the area under the plot with red
 polygon(density(Resting_BP), col = "red")
 
+# Plot the density graph for the variable specified
 plot(density(Cholestoral), 
      main = "Density plot for Cholestorol", 
      ylab = "Frequency", xlab = "Cholestorol",
@@ -483,6 +517,7 @@ plot(density(Cholestoral),
 # Fill in the area under the plot with red
 polygon(density(Cholestoral), col = "red")
 
+# Plot the density graph for the variable specified
 plot(density(Fasting_BS), 
      main = "Density plot for Sugar", 
      ylab = "Frequency", xlab = "Sugar",
@@ -492,6 +527,7 @@ plot(density(Fasting_BS),
 # Fill in the area under the plot with red
 polygon(density(Fasting_BS), col = "red")
 
+# Plot the density graph for the variable specified
 plot(density(Resting_ECG), 
      main = "Density plot for ECG", 
      ylab = "Frequency", xlab = "ECG",
@@ -501,6 +537,7 @@ plot(density(Resting_ECG),
 # Fill in the area under the plot with red
 polygon(density(Resting_ECG), col = "red")
 
+# Plot the density graph for the variable specified
 plot(density(Max_heartrate), 
      main = "Density plot for Heart_Rate", 
      ylab = "Frequency", xlab = "Heart_Rate",
@@ -510,6 +547,7 @@ plot(density(Max_heartrate),
 # Fill in the area under the plot with red
 polygon(density(Max_heartrate), col = "red")
 
+# Plot the density graph for the variable specified
 plot(density(Excercise_angina), 
      main = "Density plot for Exercise", 
      ylab = "Frequency", xlab = "Exercise",
@@ -519,6 +557,7 @@ plot(density(Excercise_angina),
 # Fill in the area under the plot with red
 polygon(density(Excercise_angina), col = "red")
 
+# Plot the density graph for the variable specified
 plot(density(Num_major_vessel), 
      main = "Density plot for Blood_Vessels", 
      ylab = "Frequency", xlab = "Blood_Vessels",
@@ -528,6 +567,7 @@ plot(density(Num_major_vessel),
 # Fill in the area under the plot with red
 polygon(density(Num_major_vessel), col = "red")
 
+# Displaying the result obtained for skewness through the density graph
 paste("Skewness for Age: ", round(e1071::skewness(Age), 2))
 paste("Skewness for Sex: ", round(e1071::skewness(Sex), 2))
 paste("Skewness for Target: ", round(e1071::skewness(Target), 2))
@@ -559,8 +599,19 @@ paste("Skewness for Blood_Vessel: ", round(e1071::skewness(Num_major_vessel), 2)
 
 # Histogram Visualization
 opar <- par(no.readonly = TRUE)
+
+# Defining the length of the graph to get them plot
 par(mfrow = c(1,2)) # divide the graph area in 2 cols
 
+# Visual analysis of the data using histogram
+# To check the normality of the data present in different variable
+# also showing a line representing if the data is normally distributed or not
+# using qqnorm() & qqline() function
+
+# Visual representation for the attributed & analyzing the 
+# normal distribution of the variables
+
+# For Target
 hist(Target, 
      main = "Normalility proportion of Target", 
      xlab = "Target")
@@ -568,7 +619,7 @@ hist(Target,
 qqnorm(Target)
 qqline(Target, col = "red")
 
-
+# For Age
 hist(Age, 
      main = "Normalility proportion of Age", 
      xlab = "Age")
@@ -576,7 +627,7 @@ hist(Age,
 qqnorm(Age)
 qqline(Age, col = "red")
 
-
+# For Sex
 hist(Sex, 
      main = "Normalility proportion of Sex", 
      xlab = "Sex")
@@ -584,6 +635,7 @@ hist(Sex,
 qqnorm(Sex)
 qqline(Sex, col = "red")
 
+# For Chest_Pain
 hist(Chest_pain, 
      main = "Normalility proportion of Chest_Pain", 
      xlab = "Chest_Pain")
@@ -591,7 +643,7 @@ hist(Chest_pain,
 qqnorm(Chest_pain)
 qqline(Chest_pain, col = "red")
 
-
+# For Blood_Pressure
 hist(Resting_BP, 
      main = "Normalility proportion of Blood_Pressure", 
      xlab = "Blood_Pressure (mm/Hg)")
@@ -599,6 +651,7 @@ hist(Resting_BP,
 qqnorm(Resting_BP)
 qqline(Resting_BP, col = "red")
 
+# For Cholestoral
 hist(Cholestoral, 
      main = "Normalility proportion of Cholestorol", 
      xlab = "Cholestorol (mg/dl)")
@@ -606,6 +659,7 @@ hist(Cholestoral,
 qqnorm(Cholestoral)
 qqline(Cholestoral, col = "red")
 
+# For Sugar
 hist(Fasting_BS, 
      main = "Normalility proportion of Sugar", 
      xlab = "Sugar (mg/dl)")
@@ -613,6 +667,7 @@ hist(Fasting_BS,
 qqnorm(Fasting_BS)
 qqline(Fasting_BS, col = "red")
 
+# For ECG
 hist(Resting_ECG, 
      main = "Normalility proportion of ECG", 
      xlab = "ECG")
@@ -620,6 +675,7 @@ hist(Resting_ECG,
 qqnorm(Resting_ECG)
 qqline(Resting_ECG, col = "red")
 
+# For Heart_Rate
 hist(Max_heartrate, 
      main = "Normalility proportion of Heart_Rate", 
      xlab = "Heart_Rate")
@@ -627,6 +683,7 @@ hist(Max_heartrate,
 qqnorm(Max_heartrate)
 qqline(Max_heartrate, col = "red")
 
+# For Excercise
 hist(Excercise_angina, 
      main = "Normalility proportion of Excercise", 
      xlab = "Excercise")
@@ -634,6 +691,7 @@ hist(Excercise_angina,
 qqnorm(Excercise_angina)
 qqline(Excercise_angina, col = "red")
 
+# For Blood_vessels
 hist(Num_major_vessel, 
      main = "Normalility proportion of Blood_Vessels", 
      xlab = "Blood_Vessels")
@@ -643,43 +701,420 @@ qqline(Num_major_vessel, col = "red")
 
 par <- opar
 
-# Here while predicting we only used the ND variables
-attach(new_heart_data)
-mlr_model <- lm(Target ~ 
-                  Age + Resting_BP + Cholestoral + Max_heartrate)
-detach(new_heart_data)
+##################################
+# Model Validation (Train & Test)
+##################################
+# Keeping in mind we have dropped the null values & 
+# also the categorical variables are converted to factor as required
 
-summary(mlr_model)
+# The training set will evaluate the model using all the variables we defined
+# We are not specifying the parameters to train, let the model use them by default
+# meaning that some random set of combinations will be selected and the model 
+# will be trained for each combinations
 
-# Here we decided to remove the variables (AGE, Sex, Exercise) as it is 
-# not much useful in predicting a model
-# new_heart_data <- subset(new_heart_data, 
-#                        select = c(-Age, -Sex, -Excercise_angina))
-
-attach(new_heart_data)
-mlr_model_1 <- lm(Target ~ 
-                    Resting_BP + Chest_pain + Cholestoral + Max_heartrate + 
-                    Resting_ECG + Fasting_BS + Num_major_vessel)
-detach(new_heart_data)
-summary(mlr_model_1)
+# Validating the variables for building a model
+# Comparing the model with the ratio of 70% training & 
+# 30% for testing the instances
+# Observing that the distribution of the Dependent var (Target) need to be same
 
 attach(new_heart_data)
-mlr_model_2 <- lm(Target ~ 
-                    Resting_BP + Cholestoral + Max_heartrate + Chest_pain)
-detach(new_heart_data)
-summary(mlr_model_2)
+set.seed(1)
+no_rows_heart_data <- nrow(new_heart_data)
+sample <- sample(1:no_rows_heart_data, 
+                 size = round(0.7 * no_rows_heart_data), 
+                 replace = FALSE)
+
+training_data <- new_heart_data[sample, ]
+testing_data <- new_heart_data[-sample, ]
 
 
+######################################
+# Normal  analysis model = (fit_model)
+# with all the variables
+######################################
 
-confint(mlr_model)
-confint(mlr_model_1)
-confint(mlr_model_2)
+# The trained data is stored into the fit_model with a defined formula for lm()
+fit_model <- lm(Target ~ Age + Sex + Chest_pain + 
+                  Resting_BP + Resting_ECG + Fasting_BS + 
+                  Max_heartrate + Cholestoral + Excercise_angina + 
+                  Num_major_vessel, data = training_data)
+
+# Summary of the fit_model to view the statistic results
+summary(fit_model)
+# After viewing the results,
+# the *** signifies that they have a high correlation between the variables.
+# The coefficient is significantly different from zero at the p-value < 0.0001.
+
+# The coefficient values for Age, Resting_BP, Resting_ECG, Fasting_BS signifies 
+# they are not linearly correlated comparing the other predictor variables.
+# While the Sex, Chest_Pain, Max_heartrate, Excercise_angina & Num_major_vessels 
+# values shows that they are having a linear relationship.
+
+# The Multiple R-squared value explains that there is 47% of the variation 
+# of getting the Heart-Attack for the patients data provided.
+
+# Analyzing the confidence interval result of the model build
+confint(fit_model)
+
+attach(new_heart_data)
+# Importing the library
+library(car)
+par(mfrow = c(1,1))
+# Plots empirical quantiles of studentized residuals from a linear model, 
+# against theoretical quantiles of a comparison distribution
+qqPlot(fit_model, 
+       labels=row(new_heart_data), 
+       id.method="identify", 
+       simulate=TRUE, 
+       main = "Q-Q Plot for fit_model")
+# We identified that there are two values in the plot which have outliers
+# We will analyze them and make the decision
+
+# Training the outlier data and analyzing whether it affect or not
+training_data["96",]
+training_data["260",]
+
+# Fitting the outlier data to the new model
+fitted(fit_model)["96"]
+fitted(fit_model)["260"]
+
+# We will use the standardize residuals for better statistical analysis 
+# as they are independent and the randomly generated samples are not zero.
+library(car)
+# Histogram Visualization for the distribution error
+# Defining the length of the graph to get them plot
+student_fit_model <- rstudent(fit_model)
+hist(student_fit_model,
+     breaks=10,
+     freq=FALSE,
+     xlab="Studentized Residual",
+     main="Distribution of Errors")
+
+rug(jitter(student_fit_model), col="brown")
+
+curve(dnorm(x, mean=mean(student_fit_model), sd=sd(student_fit_model)), 
+      add=TRUE, col="blue", lwd=2)
+
+lines(density(student_fit_model)$x, density(student_fit_model)$y, col="red", lwd=2, lty=2)
+
+legend("topright", legend = c( "Normal Curve", "Kernel Density Curve"), 
+       lty=1:2, col=c("blue","red"), cex=.7)
+
+# We can use the below function to check whether a model 
+# contains any outliers
+outlierTest(fit_model)
+par <- opar
+# Here we removed the entire row as we came across that there were 
+# some outliers present when we performed (outlierTest) on the model to fit
+new_heart_data[-c(96), ]
+new_heart_data <- new_heart_data[-c(96), ]
+
+# REBUILDING A MODEL
+# Training the data available by dropping the outlier row and building 
+# the set of new train & test data.
+attach(new_heart_data)
+set.seed(1)
+no_rows_heart_data <- nrow(new_heart_data)
+sample <- sample(1:no_rows_heart_data, 
+                 size = round(0.7 * no_rows_heart_data), 
+                 replace = FALSE)
+
+training_data <- new_heart_data[sample, ]
+testing_data <- new_heart_data[-sample, ]
+
+# The trained data is stored into the fit_model with a defined formula for lm()
+fit_model <- lm(Target ~ Age + Sex + Chest_pain + 
+                  Resting_BP + Resting_ECG + Fasting_BS + 
+                  Max_heartrate + Cholestoral + Excercise_angina + 
+                  Num_major_vessel, data = training_data)
 
 
+# Summary of the fit_model to view the statistic results
+summary(fit_model)
+# The Multiple R-squared value explains that there is 46% of the variation 
+# of getting the Heart-Attack for the patients data provided.
+
+# After using the outlierTest function and getting reed of the outliers 
+# there is not much difference in the R-squared values of model build.
+# Only a slight difference of 1% is observed even after removing the outliers 
+# by best fitting the model again with the set of train & test data.
+
+opar <- par(no.readonly = TRUE)
+
+# Histogram Visualization for the distribution error after deleting the outliers
+# Defining the length of the graph to get them plot
+par(mfrow = c(1,1)) # divide the graph area in 1 cols
+library(car)
+attach(new_heart_data)
+student_fit_model <- rstudent(fit_model)
+hist(student_fit_model,
+     breaks=10,
+     freq=FALSE,
+     xlab="Studentized Residual",
+     main="Distribution of Errors")
+
+rug(jitter(student_fit_model), col="brown")
+
+curve(dnorm(x, mean=mean(student_fit_model), sd=sd(student_fit_model)), 
+      add=TRUE, col="blue", lwd=2)
+
+lines(density(student_fit_model)$x, density(student_fit_model)$y, col="red", lwd=2, lty=2)
+
+legend("topright", legend = c( "Normal Curve", "Kernel Density Curve"), 
+       lty=1:2, col=c("blue","red"), cex=.7)
+# The plot shows that the outliers are been removed
+
+# We can use the below function to check whether a model 
+# contains any outliers
+outlierTest(fit_model)
+# As we decided we can keep the outliers as processed further to build
+# and evaluate a model
+par <- opar
+
+# Checking the linearity of the data using different plot techniques
+# To visualize the linear relationship between the 
+# dependent & independent through a linear line.
+crPlots(fit_model)
+
+# Influential observations using the cooks distance formula on trained data
+cutoff <- 4/(nrow(training_data) - length(fit_model$coefficients) - 2)
+
+# Plotting the graphical analysis of the values using Cook-D method
+plot(fit_model, which = 4, cook.levels = cutoff)
+
+# It draws a cutoff line where any data above it can be ignored
+abline(h = cutoff, lty = 2, col = "red")
+
+# We will not plot any influence data as we are not observing any influence 
+# below the cutoff value line, we can proceed further
+
+# We can create a graphical analysis of the predictor variables with all 
+# independent variables which yeild only a single response on the dependent var
+# Av plots are known as added-variable plots used to show the regression 
+# coefficient of the predictor variables
+avPlots(fit_model, ask = FALSE)
+
+# We can now check the Homoscedasticty Test using (ncvTest) which generates the 
+# result for the hypothesis of constant error variance with a fitted model data
+# If p-value < 0.05, then the error variance value may change (Homoscedasticity)
+# If p-value > 0.05, then the error variance value may not change (Heteroscedasticity)
+ncvTest(fit_model)
+# A result shows that p-value = 0.8, which is greater than cut-off,
+# then the error variance value does not change
+
+# The following visualization will show the scatter plot of the 
+# standardized residuals versus the fitted model values & draws 
+# the line which best fits the data
+par(mfrow = c(1,1))
+spreadLevelPlot(fit_model)
+par <- opar
+# we observed the best fit line with the above function but it not actual to the
+# default line, but it best fits with the data used for building a model
+
+# install.packages("gvlma")
+# It determines the global validation of the linear model assumptions & also 
+# evaluates separately the different test performed while building a model
+library(gvlma)
+gvmodel <- gvlma(fit_model)
+summary(gvmodel)
+# We observed that the model build accepts all the statistical assumptions we 
+# made with the regression model.
+# Also the p-values > 0.05, so the decisions are acceptable.
 
 
+############################
+# NEW MODEL = (fit_model_1)
+# with modified variables
+############################
+attach(new_heart_data)
+# Building a model with the significant variables including some other variables 
+# which are better useful as predictor variables for the model to fit
+fit_model_1 <- lm(Target ~ Age + Sex + Chest_pain + 
+                    Max_heartrate + Cholestoral + Excercise_angina + 
+                    Num_major_vessel, data = training_data)
 
+# Viewing the statistic result for the build model
+summary(fit_model_1)
+# The Multiple R-squared value explains that there is 45% of the variation 
+# of getting the Heart-Attack for the patients data provided.
 
+# Analyzing the confidence interval result of the model build
+confint(fit_model_1)
+
+attach(new_heart_data)
+# Importing the library
+library(car)
+
+# Plots empirical quantiles of studentized residuals from a linear model, 
+# against theoretical quantiles of a comparison distribution
+qqPlot(fit_model_1, 
+       labels=row(new_heart_data), 
+       id.method="identify", 
+       simulate=TRUE, 
+       main = "Q-Q Plot for fit_model_1")
+# We identified that there are two values in the plot which have outliers
+# We will analyze them and make the decision
+
+# Training the outlier data and analyzing whether it affect or not
+training_data["159",]
+training_data["260",]
+
+# Fitting the outlier data to the new model
+fitted(fit_model_1)["159"]
+fitted(fit_model_1)["260"]
+
+# We will use the standardize residuals for better statistical analysis 
+# as they are independent and the randomly generated samples are not zero.
+library(car)
+# Histogram Visualization for the distribution error
+# Defining the length of the graph to get them plot
+student_fit_model_1 <- rstudent(fit_model_1)
+hist(student_fit_model_1,
+     breaks=10,
+     freq=FALSE,
+     xlab="Studentized Residual",
+     main="Distribution of Errors")
+
+rug(jitter(student_fit_model_1), col="brown")
+
+curve(dnorm(x, mean=mean(student_fit_model_1), sd=sd(student_fit_model_1)), 
+      add=TRUE, col="blue", lwd=2)
+
+lines(density(student_fit_model_1)$x, density(student_fit_model_1)$y, col="red", lwd=2, lty=2)
+
+legend("topright", legend = c( "Normal Curve", "Kernel Density Curve"), 
+       lty=1:2, col=c("blue","red"), cex=.7)
+
+# We can use the below function to check whether a model 
+# contains any outliers
+outlierTest(fit_model_1)
+
+# Here we removed the entire row as we came across that there were 
+# some outliers present when we performed (outlierTest) on the model to fit
+new_heart_data[-c(159, 260), ]
+new_heart_data <- new_heart_data[-c(159, 260), ]
+
+# REBUILDING A MODEL
+# Training the data available by dropping the outlier row and building 
+# the set of new train & test data.
+attach(new_heart_data)
+set.seed(1)
+no_rows_heart_data <- nrow(new_heart_data)
+sample <- sample(1:no_rows_heart_data, 
+                 size = round(0.7 * no_rows_heart_data), 
+                 replace = FALSE)
+
+training_data <- new_heart_data[sample, ]
+testing_data <- new_heart_data[-sample, ]
+
+# Training the new model with removing the outliers
+fit_model_1 <- lm(Target ~ Age + Sex + Chest_pain + 
+                    Max_heartrate + Cholestoral + Excercise_angina + 
+                    Num_major_vessel, data = training_data)
+
+# Viewing the statistic result for the build model
+summary(fit_model_1)
+# The Multiple R-squared value explains that there is 47% of the variation 
+# of getting the Heart-Attack for the patients data provided through this model.
+
+# After using the outlierTest function and getting reed of the outliers 
+# there is a difference in the R-squared values of model build.
+# A slight increase of 2% is observed even after removing the outliers 
+# by best fitting the model again with the set of train & test data.
+
+opar <- par(no.readonly = TRUE)
+
+# Histogram Visualization for the distribution error after deleting the outliers
+# Defining the length of the graph to get them plot
+par(mfrow = c(1,1)) # divide the graph area in 1 cols
+library(car)
+attach(new_heart_data)
+student_fit_model_1 <- rstudent(fit_model_1)
+hist(student_fit_model_1,
+     breaks=10,
+     freq=FALSE,
+     xlab="Studentized Residual",
+     main="Distribution of Errors")
+
+rug(jitter(student_fit_model_1), col="brown")
+
+curve(dnorm(x, mean=mean(student_fit_model_1), sd=sd(student_fit_model_1)), 
+      add=TRUE, col="blue", lwd=2)
+
+lines(density(student_fit_model_1)$x, density(student_fit_model_1)$y, col="red", lwd=2, lty=2)
+
+legend("topright", legend = c( "Normal Curve", "Kernel Density Curve"), 
+       lty=1:2, col=c("blue","red"), cex=.7)
+# The plot shows that the outliers are been removed
+
+# We can use the below function to check whether a model 
+# contains any outliers
+outlierTest(fit_model_1)
+# As we decided we can keep the outliers as processed further to build
+# and evaluate a model
+par <- opar
+
+# Checking the linearity of the data using different plot techniques
+# To visualize the linear relationship between the 
+# dependent & independent through a linear line.
+crPlots(fit_model_1)
+
+# Influential observations using the cooks distance formula on trained data
+cutoff <- 4/(nrow(training_data) - length(fit_model_1$coefficients) - 2)
+
+# Plotting the graphical analysis of the values using Cook-D method
+plot(fit_model_1, which = 4, cook.levels = cutoff)
+
+# It draws a cutoff line where any data above it can be ignored
+abline(h = cutoff, lty = 2, col = "red")
+
+# We will not plot any influence data as we are not observing any influence 
+# below the cutoff value line, we can proceed further
+
+# We can create a graphical analysis of the predictor variables with all 
+# independent variables which yeild only a single response on the dependent var
+# Av plots are known as added-variable plots used to show the regression 
+# coefficient of the predictor variables
+avPlots(fit_model_1, ask = FALSE)
+
+# We can now check the Homoscedasticty Test using (ncvTest) which generates the 
+# result for the hypothesis of constant error variance with a fitted model data
+# If p-value < 0.05, then the error variance value may change (Homoscedasticity)
+# If p-value > 0.05, then the error variance value may not change (Heteroscedasticity)
+ncvTest(fit_model_1)
+# A result shows that p-value = 0.8, which is greater than cut-off,
+# then the error variance value does not change
+
+# The following visualization will show the scatter plot of the 
+# standardized residuals versus the fitted model values & draws 
+# the line which best fits the data
+par(mfrow = c(1,1))
+spreadLevelPlot(fit_model_1)
+par <- opar
+# we observed the best fit line with the above function but it not actual to the
+# default line, but it best fits with the data used for building a model
+
+# install.packages("gvlma")
+# It determines the global validation of the linear model assumptions & also 
+# evaluates separately the different test performed while building a model
+library(gvlma)
+gvmodel <- gvlma(fit_model_1)
+summary(gvmodel)
+# We observed that the model build accepts all the statistical assumptions we 
+# made with the regression model.
+# Also the p-values > 0.05, so the decisions are acceptable.
+# The results evaluate that the model build shows the Mulitple R-Squared = 0.47 
+# i.e the model predicts 47% of the variation for getting a Heart-Attack 
+# with the information given.
+
+# Comparing the model build with different varaibles using the AIC() function
+AIC(fit_model)
+# AIC value = 191.74
+AIC(fit_model_1)
+# AIC value = 179.41
+# When compared it signifies that the model(fir_model_1) is the best fit with 
+# the different predictor variables used.
+# Lower the AIC score, higher are the chances of best predicting model build.
 
 
 
