@@ -1103,19 +1103,19 @@ summary(gvmodel)
 # We observed that the model build accepts all the statistical assumptions we 
 # made with the regression model.
 # Also the p-values > 0.05, so the decisions are acceptable.
-# The results evaluate that the model build shows the Mulitple R-Squared = 0.47 
+# The results evaluate that the model build shows the Multiple R-Squared = 0.47 
 # i.e the model predicts 47% of the variation for getting a Heart-Attack 
-# with the information given.
+# with the information provided.
 
-# Comparing the model build with different varaibles using the AIC() function
+# Comparing the model build with different variables using the AIC() function
 AIC(fit_model)
 # AIC value = 191.74
 AIC(fit_model_1)
 # AIC value = 179.41
 # When compared it signifies that the model(fir_model_1) is the best fit with 
 # the different predictor variables used.
-# Lower the AIC score, higher are the chances of best predicting model build.
-
+# Lower the AIC score, high are the chances of best predicting model build 
+# with the analysis of the result statistic observed.
 
 
 
