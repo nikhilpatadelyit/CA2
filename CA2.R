@@ -1,6 +1,6 @@
 # Analyzing and dealing with the data related to the "HEART"
 # for visualizing and predicting the functioning & working 
-# of the patients heart and implementing the model for the chances 
+# of the patients heart and implementing the predictive model for the chance 
 # of "HEART-ATTACK" with the variables present.
 
 # Importing & Installing the required packages & libraries
@@ -122,7 +122,8 @@ pairs.panels(new_heart_data,
 # Step-1: We will check the correlation
 attach(new_heart_data)
 str(new_heart_data)
-
+opar <- par(no.readonly = TRUE)
+par(mfrow = c(2, 3)) # divide graph area in 2 rows by 3 columns
 # We can examine whether there is a linear correlation between both variables
 # For Target v/s Age
 # Plot the graph to analyze the specified attributes 
@@ -162,7 +163,7 @@ cor(Target, Sex)
 # Plot the graph to analyze the specified attributes 
 # with Target & Chest_Pain
 scatter.smooth(x = Target, y = Chest_pain, 
-               main = "Target ~ Cheat_Pain", 
+               main = "Target ~ Chest_Pain", 
                xlab = "Chance of Heart Attack",
                ylab = "Chest Pain")
 # The plot shows there is very less correlation
@@ -293,6 +294,7 @@ cor(Target, Num_major_vessel)
 # The correlation tests shows that the correlation between the Target & 
 # Blood Vessel variable = -0.39 indicating a strong negative correlation.
 
+par(opar)
 
 # To check the results of correlation for all the variables from the DF
 paste("Correlation for the Target & Age:", cor(Target, Age))
@@ -313,6 +315,8 @@ head(new_heart_data)
 
 # Initially making the DF to use for just READ-ONLY option
 opar <- par(no.readonly = TRUE)
+
+par(mfrow = c(2, 3)) # divide graph area in 3 rows by 2 columns
 
 # We will check here for any Outliers
 # Step 2: we will check the Outliers here
@@ -430,6 +434,8 @@ new_heart_data <- subset(new_heart_data,
                          Max_heartrate != 71)
 
 attach(new_heart_data)
+opar <- par(no.readonly = TRUE)
+par(mfrow = c(1, 3)) # divide graph area in 1 rows by 3 columns
 # To check if the oulier is removed
 boxplot(Resting_BP, 
         main = "Blood_Pressure", 
@@ -448,12 +454,12 @@ boxplot(Max_heartrate,
         sub = paste("Outlier rows: ", 
                     boxplot.stats(Max_heartrate)$out))
 # There is no outlier present now
-
-# Here we will check the Normality
-# Step-3: We are going to check the normality
+par(opar)
+# Here we will check the Normality and skewness
+# Step-3: We are going to check the normality and skewness
 library(e1071)
 opar <- par(no.readonly = TRUE)
-par(mfrow =c(3,4)) # 2rows * 4cols
+par(mfrow =c(2,3)) # 2rows * 3cols
 
 # We can also get to the skewness for all the variables into the DF
 # using the following function
@@ -567,6 +573,8 @@ plot(density(Num_major_vessel),
 # Fill in the area under the plot with red
 polygon(density(Num_major_vessel), col = "red")
 
+par(opar)
+
 # Displaying the result obtained for skewness through the density graph
 paste("Skewness for Age: ", round(e1071::skewness(Age), 2))
 paste("Skewness for Sex: ", round(e1071::skewness(Sex), 2))
@@ -597,7 +605,8 @@ paste("Skewness for Blood_Vessel: ", round(e1071::skewness(Num_major_vessel), 2)
 # Excercise = 0.77 - moderately skewed
 # Blood_Vessel = 1.31 - highly skewed
 
-# Histogram Visualization
+# Histogram Visualization and distribution
+# Here we will be checking the normality using Q-Q-Norm-Plot
 opar <- par(no.readonly = TRUE)
 
 # Defining the length of the graph to get them plot
@@ -608,7 +617,7 @@ par(mfrow = c(1,2)) # divide the graph area in 2 cols
 # also showing a line representing if the data is normally distributed or not
 # using qqnorm() & qqline() function
 
-# Visual representation for the attributed & analyzing the 
+# Visual representation for analyzing the 
 # normal distribution of the variables
 
 # For Target
@@ -702,8 +711,19 @@ qqline(Num_major_vessel, col = "red")
 par <- opar
 
 ##################################
-# Model Validation (Train & Test)
+# IMPLEMENTING A LINEAR REGRESSION
 ##################################
+attach(new_heart_data)
+fit_test_lr <- lm(Target ~ Age + Sex + Resting_BP + Resting_ECG + 
+                 Fasting_BS + Max_heartrate + Num_major_vessel + Cholestoral + 
+                 Excercise_angina + Chest_pain)
+
+# observe the statistic result for linear regression
+summary(fit_test_lr)
+
+###############################################
+# Model Validation (Train & Test)
+###############################################
 # Keeping in mind we have dropped the null values & 
 # also the categorical variables are converted to factor as required
 
@@ -713,25 +733,24 @@ par <- opar
 # will be trained for each combinations
 
 # Validating the variables for building a model
-# Comparing the model with the ratio of 70% training & 
-# 30% for testing the instances
+# Comparing the model with the ratio of 80% training & 
+# 20% for testing the instances
 # Observing that the distribution of the Dependent var (Target) need to be same
 
 attach(new_heart_data)
 set.seed(1)
 no_rows_heart_data <- nrow(new_heart_data)
 sample <- sample(1:no_rows_heart_data, 
-                 size = round(0.7 * no_rows_heart_data), 
+                 size = round(0.8 * no_rows_heart_data), 
                  replace = FALSE)
 
 training_data <- new_heart_data[sample, ]
 testing_data <- new_heart_data[-sample, ]
 
 
-######################################
-# Normal  analysis model = (fit_model)
-# with all the variables
-######################################
+##################################################################
+# Normal  analysis model = (fit_model) with all the variables
+#################################################################
 
 # The trained data is stored into the fit_model with a defined formula for lm()
 fit_model <- lm(Target ~ Age + Sex + Chest_pain + 
@@ -750,7 +769,7 @@ summary(fit_model)
 # While the Sex, Chest_Pain, Max_heartrate, Excercise_angina & Num_major_vessels 
 # values shows that they are having a linear relationship.
 
-# The Multiple R-squared value explains that there is 47% of the variation 
+# The Multiple R-squared value explains that there is 45% of the variation 
 # of getting the Heart-Attack for the patients data provided.
 
 # Analyzing the confidence interval result of the model build
@@ -760,6 +779,7 @@ attach(new_heart_data)
 # Importing the library
 library(car)
 par(mfrow = c(1,1))
+
 # Plots empirical quantiles of studentized residuals from a linear model, 
 # against theoretical quantiles of a comparison distribution
 qqPlot(fit_model, 
@@ -771,11 +791,11 @@ qqPlot(fit_model,
 # We will analyze them and make the decision
 
 # Training the outlier data and analyzing whether it affect or not
-training_data["96",]
+training_data["140",]
 training_data["260",]
 
 # Fitting the outlier data to the new model
-fitted(fit_model)["96"]
+fitted(fit_model)["140"]
 fitted(fit_model)["260"]
 
 # We will use the standardize residuals for better statistical analysis 
@@ -806,8 +826,8 @@ outlierTest(fit_model)
 par <- opar
 # Here we removed the entire row as we came across that there were 
 # some outliers present when we performed (outlierTest) on the model to fit
-new_heart_data[-c(96), ]
-new_heart_data <- new_heart_data[-c(96), ]
+new_heart_data[-c(140), ]
+new_heart_data <- new_heart_data[-c(140), ]
 
 # REBUILDING A MODEL
 # Training the data available by dropping the outlier row and building 
@@ -816,7 +836,7 @@ attach(new_heart_data)
 set.seed(1)
 no_rows_heart_data <- nrow(new_heart_data)
 sample <- sample(1:no_rows_heart_data, 
-                 size = round(0.7 * no_rows_heart_data), 
+                 size = round(0.8 * no_rows_heart_data), 
                  replace = FALSE)
 
 training_data <- new_heart_data[sample, ]
@@ -831,8 +851,12 @@ fit_model <- lm(Target ~ Age + Sex + Chest_pain +
 
 # Summary of the fit_model to view the statistic results
 summary(fit_model)
-# The Multiple R-squared value explains that there is 46% of the variation 
+# The Multiple R-squared value explains that there is 43% of the variation 
 # of getting the Heart-Attack for the patients data provided.
+
+# AIC() for the normal model build
+AIC(fit_model)
+# AIC value = 227.85
 
 # After using the outlierTest function and getting reed of the outliers 
 # there is not much difference in the R-squared values of model build.
@@ -894,7 +918,15 @@ abline(h = cutoff, lty = 2, col = "red")
 # coefficient of the predictor variables
 avPlots(fit_model, ask = FALSE)
 
-# We can now check the Homoscedasticty Test using (ncvTest) which generates the 
+# Influence Plot
+library(car)
+influencePlot(fit_model, main = "Influence Plot", 
+              sub = "Circle size is proportional to Cooks distance")
+
+# The influence plot shows that the row (300, 260, 140) are very close to the 
+# boundary level which is selected by default and may be they are the outliers. 
+
+# We can now check the Homoscedasticity Test using (ncvTest) which generates the 
 # result for the hypothesis of constant error variance with a fitted model data
 # If p-value < 0.05, then the error variance value may change (Homoscedasticity)
 # If p-value > 0.05, then the error variance value may not change (Heteroscedasticity)
@@ -908,7 +940,8 @@ ncvTest(fit_model)
 par(mfrow = c(1,1))
 spreadLevelPlot(fit_model)
 par <- opar
-# we observed the best fit line with the above function but it not actual to the
+# Suggested power transformation:  0.816969
+# we observed a best fit line with the above function but it is not actual to the
 # default line, but it best fits with the data used for building a model
 
 # install.packages("gvlma")
@@ -921,46 +954,83 @@ summary(gvmodel)
 # made with the regression model.
 # Also the p-values > 0.05, so the decisions are acceptable.
 
-# Comparing the model build with different variables using the AIC() function
-AIC(fit_model)
-# AIC value = 191.74
+# Checking the multi-collinearity
+# It can be detected with the Variance Inflation Factor(VIF)
+library(car)
+vif(fit_model)
 
-# Evaluating the analysis of the model using a Step-wise Regression
-library(MASS)
-attach(new_heart_data)
-fit_test_model <- lm(Target ~ Age + Sex + Chest_pain + 
+# We can check whether any of the variables indicate a 
+# multi-collinearity problem if the value > 2
+sqrt(vif(fit_model)) > 2
+# The individual coefficient of the variables are < 2, so there is no 
+# problem of multi-collinearity.
+
+# Model Forecasting
+# Log transformation of the variables
+# As we have already generated the power transformation value = 0.81, there was
+# no need to do the power transformation for the variables
+
+# Just to acknowledge that the value 0.8 lies between (0 - 1) I will perform 
+# a sqrt() on the new model with the dependent variable
+# Transforming the Target variable with the sqrt() funtion
+sqrt_transform_Target <- sqrt(training_data$Target)
+training_data$Target_sqrt <- sqrt_transform_Target
+
+# Building a model with the log transformation 
+fit_test_model <- lm(Target_sqrt ~ Age + Sex + Chest_pain + 
                        Resting_BP + Resting_ECG + Fasting_BS + 
                        Max_heartrate + Cholestoral + Excercise_angina + 
                        Num_major_vessel, data = training_data)
 
+# Summary of the fit_test_model transformation model to view the statistic results
+summary(fit_test_model)
+# The Multiple R-squared value explains that there is 43% of the variation 
+# of getting the Heart-Attack for the patients data provided.
+
+# AIC() for the transform model build
+AIC(fit_test_model)
+# AIC value = 227.85
+
+# Comparing the model build with different variables using the AIC() function
+AIC(fit_model, fit_test_model)
+# When AIC scored is compared it does not have any difference on the 
+# model (fit_model) which was normally build using the examined variables 
+# & model (fit_test_model) which was build after performing transformation.
+
+# So for further evaluation we can use any of the model for further prediction
+# as both model does not have any difference between the AIC score.
+
+# Evaluating the analysis of the model using a Step-wise Regression
+library(MASS)
 stepAIC(fit_test_model, direction = "backward")
 # Performing the 'backward' stepwise regression on this model it showed 
 # that the predictor variables are removed one by one by the stepAIC() function  
 # for calculating the AIC score with the better combination of the variables.
 # At some point when the combinations of the variables does not change its value
 # the stepAIC() stops calculating further and gives a result which better fits.
-# Here it suggests that (Sex + Chest_pain + Resting_BP + Max_heartrate + 
+# Here it suggests that (Sex + Chest_pain + Resting_ECG + Max_heartrate + 
 # Cholestoral + Excercise_angina + Num_major_vessel) is the best combination 
-# for the model with AIC score = -394
-# We cannot conclude that this is a best for the model
+# for the model with AIC score = -431.84
+# We cannot conclude that this is a best fit for the predictive model.
 
 # install.packages("leaps")
 library(leaps)
-leaps <- regsubsets(Target ~ Age + Sex + Chest_pain + 
+leaps <- regsubsets(Target_sqrt ~ Age + Sex + Chest_pain + 
                       Resting_BP + Resting_ECG + Fasting_BS + 
                       Max_heartrate + Cholestoral + Excercise_angina + 
                       Num_major_vessel, data = training_data, nbest = 4)
 plot(leaps,scale = "adjr2")
 # The leap plot shows the best correlation of the variables with the score of 
 # R-squared and Adjusted R-squared values on the y-axis.
-# A model (bottom row) with the intercept and chest_pain has an adjusted R-squared = 0.15.
-# At the top with the variables(intercept, Sex, Chest_pain, Resting_BP, Max_heartrate, 
+# A model (bottom row) with the intercept and Excercise_angina has an 
+# adjusted R-squared = 0.15.
+# At the top with the variables(intercept, Sex, Chest_pain, Resting_ECG, Max_heartrate, 
 # Cholestoral, Excercise_angina, Num_major_vessel) shows the adjusted R-squared = 0.46.
-# Thus the top row with the value 0.46 shows that the variables used are the best fit
+# Thus the top row with the value 0.41 shows that the variables used are the best fit
 # model build. A stepwise regression check also correlates with this varaibles.
 
 # Now examine the accuracy of the model predicted
-predicted_heart_attack <- predict(fit_model, testing_data)
+predicted_heart_attack <- predict(fit_test_model, testing_data)
 
 actual_prediction <- data.frame(cbind(actuals = testing_data$Target, 
                                       predicted = predicted_heart_attack))
@@ -970,22 +1040,22 @@ head(actual_prediction)
 correlation_accuracy <- cor(actual_prediction)
 correlation_accuracy
 
-# This build model shows 60% of the correlation accuracy.
+# This build model shows 73% of the correlation accuracy.
 
-############################
-# NEW MODEL = (fit_model_1)
-# with modified variables
-############################
+#############################################################
+# NEW MODEL = (fit_model_1) with modified variables
+#############################################################
+
 attach(new_heart_data)
 # Building a model with the significant variables including some other variables 
-# which are better useful as predictor variables for the model to fit
+# assuming which are better useful as predictor variables for the model to fit
 fit_model_1 <- lm(Target ~ Age + Sex + Chest_pain + 
                     Max_heartrate + Cholestoral + Excercise_angina + 
                     Num_major_vessel, data = training_data)
 
 # Viewing the statistic result for the build model
 summary(fit_model_1)
-# The Multiple R-squared value explains that there is 45% of the variation 
+# The Multiple R-squared value explains that there is 41% of the variation 
 # of getting the Heart-Attack for the patients data provided.
 
 # Analyzing the confidence interval result of the model build
@@ -1007,11 +1077,11 @@ qqPlot(fit_model_1,
 
 # Training the outlier data and analyzing whether it affect or not
 training_data["159",]
-training_data["260",]
+training_data["140",]
 
 # Fitting the outlier data to the new model
 fitted(fit_model_1)["159"]
-fitted(fit_model_1)["260"]
+fitted(fit_model_1)["140"]
 
 # We will use the standardize residuals for better statistical analysis 
 # as they are independent and the randomly generated samples are not zero.
@@ -1041,8 +1111,8 @@ outlierTest(fit_model_1)
 
 # Here we removed the entire row as we came across that there were 
 # some outliers present when we performed (outlierTest) on the model to fit
-new_heart_data[-c(159, 260), ]
-new_heart_data <- new_heart_data[-c(159, 260), ]
+new_heart_data[-c(159, 140), ]
+new_heart_data <- new_heart_data[-c(159, 140), ]
 
 # REBUILDING A MODEL
 # Training the data available by dropping the outlier row and building 
@@ -1051,7 +1121,7 @@ attach(new_heart_data)
 set.seed(1)
 no_rows_heart_data <- nrow(new_heart_data)
 sample <- sample(1:no_rows_heart_data, 
-                 size = round(0.7 * no_rows_heart_data), 
+                 size = round(0.8 * no_rows_heart_data), 
                  replace = FALSE)
 
 training_data <- new_heart_data[sample, ]
@@ -1064,8 +1134,12 @@ fit_model_1 <- lm(Target ~ Age + Sex + Chest_pain +
 
 # Viewing the statistic result for the build model
 summary(fit_model_1)
-# The Multiple R-squared value explains that there is 47% of the variation 
+# The Multiple R-squared value explains that there is 43% of the variation 
 # of getting the Heart-Attack for the patients data provided through this model.
+
+# AIC() for the normal model build
+AIC(fit_model_1)
+# AIC value = 218.24
 
 # After using the outlierTest function and getting reed of the outliers 
 # there is a difference in the R-squared values of model build.
@@ -1127,12 +1201,20 @@ abline(h = cutoff, lty = 2, col = "red")
 # coefficient of the predictor variables
 avPlots(fit_model_1, ask = FALSE)
 
+# Influence Plot
+library(car)
+influencePlot(fit_model_1, main = "Influence Plot", 
+              sub = "Circle size is proportional to Cooks distance")
+
+# The influence plot shows that the row (303, 159, 140) are very close to the 
+# boundary level which is selected by default and may be they are the outliers. 
+
 # We can now check the Homoscedasticty Test using (ncvTest) which generates the 
 # result for the hypothesis of constant error variance with a fitted model data
 # If p-value < 0.05, then the error variance value may change (Homoscedasticity)
 # If p-value > 0.05, then the error variance value may not change (Heteroscedasticity)
 ncvTest(fit_model_1)
-# A result shows that p-value = 0.8, which is greater than cut-off,
+# A result shows that p-value = 0.6, which is greater than cut-off,
 # then the error variance value does not change
 
 # The following visualization will show the scatter plot of the 
@@ -1141,6 +1223,7 @@ ncvTest(fit_model_1)
 par(mfrow = c(1,1))
 spreadLevelPlot(fit_model_1)
 par <- opar
+# Suggested power transformation:  0.6467687
 # we observed the best fit line with the above function but it not actual to the
 # default line, but it best fits with the data used for building a model
 
@@ -1153,56 +1236,87 @@ summary(gvmodel)
 # We observed that the model build accepts all the statistical assumptions we 
 # made with the regression model.
 # Also the p-values > 0.05, so the decisions are acceptable.
-# The results evaluate that the model build shows the Multiple R-Squared = 0.47 
-# i.e the model predicts 47% of the variation for getting a Heart-Attack 
+# The results evaluate that the model build shows the Multiple R-Squared = 0.43 
+# i.e the model predicts 43% of the variation for getting a Heart-Attack 
 # with the information provided.
 
-# Comparing the model build with different variables using the AIC() function
-AIC(fit_model)
-# AIC value = 191.74
-AIC(fit_model_1)
-# AIC value = 179.41
-# When compared it signifies that the model(fir_model_1) is the best fit with 
-# the different predictor variables used.
-# Lower the AIC score, high are the chances of best predicting model build 
-# with the analysis of the result statistic observed.
+# Checking the multi-collinearity
+# It can be detected with the Variance Inflation Factor(VIF)
+library(car)
+vif(fit_model_1)
 
-# Evaluating the analysis of the model using a Step-wise Regression
-library(MASS)
-attach(new_heart_data)
-fit_test_model_1 <- lm(Target ~ Age + Sex + Chest_pain + 
+# We can check whether any of the variables indicate a 
+# multi-collinearity problem if the value > 2
+sqrt(vif(fit_model_1)) > 2
+# The individual coefficient of the variables are < 2, so there is no 
+# problem of multi-collinearity.
+
+# Log transformation of the variables
+# As we have already generated the power transformation value = 0.6, there was
+# no need to do the power transformation for the variables
+
+# Just to acknowledge that the value 0.6 lies between (0.5 - 1) I will perform 
+# a sqrt() on the new model with the dependent variable
+# Transforming the Target variable with the sqrt() funtion
+sqrt_transform_Target <- sqrt(training_data$Target)
+training_data$Target_sqrt <- sqrt_transform_Target
+
+# Building a model with the log transformation 
+fit_test_model_1 <- lm(Target_sqrt ~ Age + Sex + Chest_pain + 
                          Max_heartrate + Cholestoral + Excercise_angina + 
                          Num_major_vessel, data = training_data)
 
+# Summary of the fit_test_model transformation model to view the statistic results
+summary(fit_test_model_1)
+# The Multiple R-squared value explains that there is 43% of the variation 
+# of getting the Heart-Attack for the patients data provided.
+
+# AIC() for the transform model build
+AIC(fit_test_model_1)
+# AIC value = 218.85
+
+# Comparing the model build with different variables using the AIC() function
+AIC(fit_model_1, fit_test_model_1)
+# When AIC scored is compared it does not have any difference on the 
+# model (fit_model_1) which was normally build using the modified variables 
+# & model (fit_test_model_1) which was build after performing transformation.
+
+# So for further evaluation we can use any of the model for further prediction
+# as both model does not have any difference between the AIC score.
+
+# Evaluating the analysis of the model using a Step-wise Regression
+library(MASS)
 stepAIC(fit_test_model_1, direction = "backward")
 # Performing the 'backward' stepwise regression on this model it showed 
 # that the predictor variables are removed one by one by the stepAIC() function  
 # for calculating the AIC score with the better combination of the variables.
+
 # At some point when the combinations of the variables does not change its value
 # the stepAIC() stops calculating further and gives a result which better fits.
 # Here it suggests that (Sex + Chest_pain + Max_heartrate + Cholestoral + 
 # Excercise_angina + Num_major_vessel) is the best combination 
-# for the model with AIC score = -390
-# We cannot conclude that this is a best combination for the model
+# for the model with AIC score = -431.61
+# We cannot conclude that this is a best combination for the predictive model.
 
 # install.packages("leaps")
 library(leaps)
-leaps <- regsubsets(Target ~ Age + Sex + Chest_pain + 
+leaps <- regsubsets(Target_sqrt ~ Age + Sex + Chest_pain + 
                       Max_heartrate + Cholestoral + Excercise_angina + 
                       Num_major_vessel, data = training_data, nbest = 4)
 
 plot(leaps,scale = "adjr2")
 # The leap plot shows the best correlation of the variables with the score of 
 # R-squared and Adjusted R-squared values on the y-axis.
-# A model (bottom row) with the intercept and chest_pain has an adjusted R-squared = 0.15.
-# At the top with the variables(intercept, Sex, Chest_pain, Max_heartrate, Cholestoral, 
-# Excercise_angina, Num_major_vessel) shows the adjusted R-squared = 0.47.
-# Thus the top row with the value 0.47 shows that the variables used are the best fit
+# A model (bottom row) with the intercept and Num_major_vessels has an 
+# adjusted R-squared = 0.12.
+# At the top with the variables(intercept, Age, Sex, Chest_pain, Max_heartrate, 
+# Cholestoral, Excercise_angina) shows the adjusted R-squared = 0.41.
+# Thus the top row with the value 0.41 shows that the variables used are the best fit
 # model build. A stepwise regression check also correlates with this variables.
 
 
 # Now examine the accuracy of the model predicted
-predicted_heart_attack_1 <- predict(fit_model_1, testing_data)
+predicted_heart_attack_1 <- predict(fit_test_model_1, testing_data)
 
 actual_prediction_1 <- data.frame(cbind(actuals = testing_data$Target, 
                                       predicted = predicted_heart_attack_1))
@@ -1213,6 +1327,30 @@ correlation_accuracy_1 <- cor(actual_prediction_1)
 correlation_accuracy_1
 
 # This model build with transformation of the variables shows 
-# 59% correlation accuracy
+# 68% correlation accuracy
 
+############################################################################
+# COMPARING THE TWO PREDICTIVE MODELs:
+############################################################################
+# Model1 = fit_model [ACCURACY = 73%]
+# Model1: It has all the independent variables as predictor variables
+# (Age, Sex, Chest_pain, Resting_BP, Resting_ECG, Fasting_BS, Max_heartrate) 
+# (Cholestoral, Excercise_angina, Num_major_vessel)
+############################################################################
 
+############################################################################
+# Model2 = fit_model_1 [ACCURACY = 68%]
+# Model2: It includes only some of the modified predictor variables
+# (Age, Sex, Chest_pain,  Max_heartrate, Cholestoral) 
+# (Excercise_angina, Num_major_vessel)
+############################################################################
+
+# When compared with each other it signifies that the Model1(fit_model) is the 
+# best fit with all the predictor variables, as they rely on each other 
+# for predicting a good correlation accuracy result of 73%.
+
+#############################################################################
+# Thus we can conclude that high are the chances that patient will get a 
+# heart attack, based on the  predictive model build and also along with the 
+# analysis of the result statistic observed.
+##############################################################################
