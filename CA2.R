@@ -727,12 +727,7 @@ summary(fit_test_lr)
 # Keeping in mind we have dropped the null values & 
 # also the categorical variables are converted to factor as required
 
-# The training set will evaluate the model using all the variables we defined
-# We are not specifying the parameters to train, let the model use them by default
-# meaning that some random set of combinations will be selected and the model 
-# will be trained for each combinations
-
-# Validating the variables for building a model
+# The training set will evaluate the model using all the variables we defined.
 # Comparing the model with the ratio of 80% training & 
 # 20% for testing the instances
 # Observing that the distribution of the Dependent var (Target) need to be same
@@ -744,8 +739,8 @@ sample <- sample(1:no_rows_heart_data,
                  size = round(0.8 * no_rows_heart_data), 
                  replace = FALSE)
 
-training_data <- new_heart_data[sample, ]
-testing_data <- new_heart_data[-sample, ]
+training_data <- new_heart_data[sample, ] # it has 230 records
+testing_data <- new_heart_data[-sample, ] # it has 58 records
 
 
 ##################################################################
@@ -839,8 +834,8 @@ sample <- sample(1:no_rows_heart_data,
                  size = round(0.8 * no_rows_heart_data), 
                  replace = FALSE)
 
-training_data <- new_heart_data[sample, ]
-testing_data <- new_heart_data[-sample, ]
+training_data <- new_heart_data[sample, ] # it has 230 records
+testing_data <- new_heart_data[-sample, ] # it has 57 records
 
 # The trained data is stored into the fit_model with a defined formula for lm()
 fit_model <- lm(Target ~ Age + Sex + Chest_pain + 
@@ -902,6 +897,7 @@ crPlots(fit_model)
 
 # Influential observations using the cooks distance formula on trained data
 cutoff <- 4/(nrow(training_data) - length(fit_model$coefficients) - 2)
+
 
 # Plotting the graphical analysis of the values using Cook-D method
 plot(fit_model, which = 4, cook.levels = cutoff)
@@ -1042,8 +1038,107 @@ correlation_accuracy
 
 # This build model shows 73% of the correlation accuracy.
 
+#########################
+# MODEL FORECASTING
+#########################
+
+summary(new_heart_data)
+# First Forecasting Record:
+# We will build a new df based on the model validated and predict the chance 
+# of getting a heart attack through this built model.
+df_heart_attack <- data.frame(Age = c(41), Sex = c(0), Chest_pain = c(1), 
+                              Resting_BP = c(130), Resting_ECG= c(0), 
+                              Fasting_BS = c(0), Cholestoral = c(204), 
+                              Excercise_angina = c(0), Num_major_vessel = c(0), 
+                              Max_heartrate = c(172))
+
+predicted_heart_attack <- predict(fit_test_model, df_heart_attack)
+predicted_heart_attack
+# The results suggests that when there is an increase in the different part of 
+# the human body such as the pressure, sugar, cholesterol, heart-rate level 
+# and sudden chest pain and arteries are blocked then the model predicts that 
+# there is 93% of the chances that the patient will get a heart attack.
+
+# Second Forecasting Record:
+# We will build a new df based on the model validated and predict the chance 
+# of getting a heart attack through this built model.
+df_heart_attack <- data.frame(Age = c(44), Sex = c(1), Chest_pain = c(0), 
+                              Resting_BP = c(110), Resting_ECG= c(0), 
+                              Fasting_BS = c(0), Cholestoral = c(197), 
+                              Excercise_angina = c(0), Num_major_vessel = c(1), 
+                              Max_heartrate = c(177))
+
+predicted_heart_attack <- predict(fit_test_model, df_heart_attack)
+predicted_heart_attack
+# The results suggests that while observing the above fitted data to the model 
+# when there is a increase in the cholesterol and heart-rate, even if rest of 
+# the variables are operating the heart in normal position than there is a 50% 
+# chance that patient may get a heart attack.
+
+# Third Forecasting Record:
+# We will build a new df based on the model validated and predict the chance 
+# of getting a heart attack through this built model.
+df_heart_attack <- data.frame(Age = c(71), Sex = c(0), Chest_pain = c(0), 
+                              Resting_BP = c(112), Resting_ECG= c(1), 
+                              Fasting_BS = c(0), Cholestoral = c(149), 
+                              Excercise_angina = c(0), Num_major_vessel = c(0), 
+                              Max_heartrate = c(125))
+
+predicted_heart_attack <- predict(fit_test_model, df_heart_attack)
+predicted_heart_attack
+# Results stated that even when the heart is functioning properly but the 
+# patient is old depending on the age variable then there is 77% possibility 
+# that he may get a heart-attack.
+
+# Fourth Forecasting Record:
+# We will build a new df based on the model validated and predict the chance 
+# of getting a heart attack through this built model.
+df_heart_attack <- data.frame(Age = c(68), Sex = c(1), Chest_pain = c(0), 
+                              Resting_BP = c(144), Resting_ECG= c(1), 
+                              Fasting_BS = c(1), Cholestoral = c(193), 
+                              Excercise_angina = c(0), Num_major_vessel = c(2), 
+                              Max_heartrate = c(141))
+
+predicted_heart_attack <- predict(fit_test_model, df_heart_attack)
+predicted_heart_attack
+# It states that the if patient is old age and every operating functions of 
+# heart are working properly then they have a 25% possibility to get a heart 
+# attack.
+
+# Fifth Forecasting Record:
+# We will build a new df based on the model validated and predict the chance 
+# of getting a heart attack through this built model.
+df_heart_attack <- data.frame(Age = c(35), Sex = c(0), Chest_pain = c(0), 
+                              Resting_BP = c(138), Resting_ECG= c(1), 
+                              Fasting_BS = c(0), Cholestoral = c(183), 
+                              Excercise_angina = c(0), Num_major_vessel = c(0), 
+                              Max_heartrate = c(182))
+
+predicted_heart_attack <- predict(fit_test_model, df_heart_attack)
+predicted_heart_attack
+# It states that even if the patient is young age and has an increase in the 
+# levels of pressure, cholesterol and heart_rate there are 95% chances that 
+# he will get a heart attack.
+
+# After forecasting the predictor variables with different information and 
+# evaluating that particular data into the validated training and testing model,
+# we analyzed the output of the static result that the built model shows a 
+# good prediction accuracy for the information provided to train and test data 
+# to further predict the assumptions we brought from the start, as what are the 
+# chances that patient will get a heart attack.
+
+# We analyzed and evaluated through our model that if there is an increase in 
+# the Cholestorol, Heart-rate, Blood-Pressure our model provides a best fit 
+# with the prediction accuracy results of more than 90%.
+# Comparatively males have a more chance of getting a heart attack.
+# Also we observed that, If the variables have a normal level operation with the 
+# heart, and there is an increase in the Age of the patient, here also our model 
+# states that it the best fit with the observation made of more than 75%.
+
+#############################################################
 #############################################################
 # NEW MODEL = (fit_model_1) with modified variables
+#############################################################
 #############################################################
 
 attach(new_heart_data)
